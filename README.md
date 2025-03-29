@@ -1,11 +1,15 @@
-A JSON with color names and its values. Based on http://dev.w3.org/csswg/css-color/#named-colors.
+# Installation
+> `npm install --save @types/webidl-conversions`
 
-[![NPM](https://nodei.co/npm/color-name.png?mini=true)](https://nodei.co/npm/color-name/)
+# Summary
+This package contains type definitions for webidl-conversions (https://github.com/jsdom/webidl-conversions#readme).
 
+# Details
+Files were exported from https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/webidl-conversions.
 
-```js
-var colors = require('color-name');
-colors.red //[255,0,0]
-```
+### Additional Details
+ * Last updated: Tue, 07 Nov 2023 15:11:36 GMT
+ * Dependencies: none
 
-<a href="LICENSE"><img src="https://upload.wikimedia.org/wikipedia/commons/0/0c/MIT_logo.svg" width="120"/></a>
+# Credits
+These definitions were written by [ExE Boss](https://github.com/ExE-Boss), and [BendingBender](https://github.com/BendingBender).
