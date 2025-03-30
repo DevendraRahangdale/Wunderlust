@@ -1,91 +1,169 @@
-declare namespace WebIDLConversions {
-    interface Globals {
-        [key: string]: unknown;
-
-        Number: (value?: unknown) => number;
-        String: (value?: unknown) => string;
-        TypeError: new(message?: string) => TypeError;
-    }
-
-    interface Options {
-        context?: string | undefined;
-        globals?: Globals | undefined;
-    }
-
-    interface IntegerOptions extends Options {
-        enforceRange?: boolean | undefined;
-        clamp?: boolean | undefined;
-    }
-
-    interface StringOptions extends Options {
-        treatNullAsEmptyString?: boolean | undefined;
-    }
-
-    interface BufferSourceOptions extends Options {
-        allowShared?: boolean | undefined;
-    }
-
-    type IntegerConversion = (V: unknown, opts?: IntegerOptions) => number;
-    type StringConversion = (V: unknown, opts?: StringOptions) => string;
-    type NumberConversion = (V: unknown, opts?: Options) => number;
+/// <reference lib="es2020"/>
+/** https://url.spec.whatwg.org/#url-representation */
+export interface URLRecord {
+    scheme: string;
+    username: string;
+    password: string;
+    host: string | number | IPv6Address | null;
+    port: number | null;
+    path: string | string[];
+    query: string | null;
+    fragment: string | null;
 }
 
-declare const WebIDLConversions: {
-    any<V>(V: V, opts?: WebIDLConversions.Options): V;
-    undefined(V?: unknown, opts?: WebIDLConversions.Options): void;
-    boolean(V: unknown, opts?: WebIDLConversions.Options): boolean;
+/** https://url.spec.whatwg.org/#concept-ipv6 */
+export type IPv6Address = [number, number, number, number, number, number, number, number];
 
-    byte(V: unknown, opts?: WebIDLConversions.IntegerOptions): number;
-    octet(V: unknown, opts?: WebIDLConversions.IntegerOptions): number;
+/** https://url.spec.whatwg.org/#url-class */
+export class URL {
+    constructor(url: string, base?: string | URL);
 
-    short(V: unknown, opts?: WebIDLConversions.IntegerOptions): number;
-    ["unsigned short"](V: unknown, opts?: WebIDLConversions.IntegerOptions): number;
+    get href(): string;
+    set href(V: string);
 
-    long(V: unknown, opts?: WebIDLConversions.IntegerOptions): number;
-    ["unsigned long"](V: unknown, opts?: WebIDLConversions.IntegerOptions): number;
+    get origin(): string;
 
-    ["long long"](V: unknown, opts?: WebIDLConversions.IntegerOptions): number;
-    ["unsigned long long"](V: unknown, opts?: WebIDLConversions.IntegerOptions): number;
+    get protocol(): string;
+    set protocol(V: string);
 
-    double(V: unknown, opts?: WebIDLConversions.Options): number;
-    ["unrestricted double"](V: unknown, opts?: WebIDLConversions.Options): number;
+    get username(): string;
+    set username(V: string);
 
-    float(V: unknown, opts?: WebIDLConversions.Options): number;
-    ["unrestricted float"](V: unknown, opts?: WebIDLConversions.Options): number;
+    get password(): string;
+    set password(V: string);
 
-    DOMString(V: unknown, opts?: WebIDLConversions.StringOptions): string;
-    ByteString(V: unknown, opts?: WebIDLConversions.StringOptions): string;
-    USVString(V: unknown, opts?: WebIDLConversions.StringOptions): string;
+    get host(): string;
+    set host(V: string);
 
-    object<V>(V: V, opts?: WebIDLConversions.Options): V extends object ? V : V & object;
-    ArrayBuffer(
-        V: unknown,
-        opts?: WebIDLConversions.BufferSourceOptions & { allowShared?: false | undefined },
-    ): ArrayBuffer;
-    ArrayBuffer(V: unknown, opts?: WebIDLConversions.BufferSourceOptions): ArrayBufferLike;
-    DataView(V: unknown, opts?: WebIDLConversions.BufferSourceOptions): DataView;
+    get hostname(): string;
+    set hostname(V: string);
 
-    Int8Array(V: unknown, opts?: WebIDLConversions.BufferSourceOptions): Int8Array;
-    Int16Array(V: unknown, opts?: WebIDLConversions.BufferSourceOptions): Int16Array;
-    Int32Array(V: unknown, opts?: WebIDLConversions.BufferSourceOptions): Int32Array;
+    get port(): string;
+    set port(V: string);
 
-    Uint8Array(V: unknown, opts?: WebIDLConversions.BufferSourceOptions): Uint8Array;
-    Uint16Array(V: unknown, opts?: WebIDLConversions.BufferSourceOptions): Uint16Array;
-    Uint32Array(V: unknown, opts?: WebIDLConversions.BufferSourceOptions): Uint32Array;
-    Uint8ClampedArray(V: unknown, opts?: WebIDLConversions.BufferSourceOptions): Uint8ClampedArray;
+    get pathname(): string;
+    set pathname(V: string);
 
-    Float32Array(V: unknown, opts?: WebIDLConversions.BufferSourceOptions): Float32Array;
-    Float64Array(V: unknown, opts?: WebIDLConversions.BufferSourceOptions): Float64Array;
+    get search(): string;
+    set search(V: string);
 
-    ArrayBufferView(V: unknown, opts?: WebIDLConversions.BufferSourceOptions): ArrayBufferView;
-    BufferSource(
-        V: unknown,
-        opts?: WebIDLConversions.BufferSourceOptions & { allowShared?: false | undefined },
-    ): ArrayBuffer | ArrayBufferView;
-    BufferSource(V: unknown, opts?: WebIDLConversions.BufferSourceOptions): ArrayBufferLike | ArrayBufferView;
+    get searchParams(): URLSearchParams;
 
-    DOMTimeStamp(V: unknown, opts?: WebIDLConversions.Options): number;
-};
+    get hash(): string;
+    set hash(V: string);
 
-// This can't use ES6 style exports, as those can't have spaces in export names.
-export = WebIDLConversions;
+    toJSON(): string;
+
+    readonly [Symbol.toStringTag]: "URL";
+}
+
+/** https://url.spec.whatwg.org/#interface-urlsearchparams */
+export class URLSearchParams {
+    constructor(
+        init?:
+            | ReadonlyArray<readonly [name: string, value: string]>
+            | Iterable<readonly [name: string, value: string]>
+            | { readonly [name: string]: string }
+            | string,
+    );
+
+    append(name: string, value: string): void;
+    delete(name: string): void;
+    get(name: string): string | null;
+    getAll(name: string): string[];
+    has(name: string): boolean;
+    set(name: string, value: string): void;
+    sort(): void;
+
+    keys(): IterableIterator<string>;
+    values(): IterableIterator<string>;
+    entries(): IterableIterator<[name: string, value: string]>;
+    forEach<THIS_ARG = void>(
+        callback: (this: THIS_ARG, value: string, name: string, searchParams: this) => void,
+        thisArg?: THIS_ARG,
+    ): void;
+
+    readonly [Symbol.toStringTag]: "URLSearchParams";
+    [Symbol.iterator](): IterableIterator<[name: string, value: string]>;
+}
+
+/** https://url.spec.whatwg.org/#concept-url-parser */
+export function parseURL(input: string, options?: { readonly baseURL?: URLRecord | undefined }): URLRecord | null;
+
+/** https://url.spec.whatwg.org/#concept-basic-url-parser */
+export function basicURLParse(
+    input: string,
+    options?: {
+        baseURL?: URLRecord | undefined;
+        url?: URLRecord | undefined;
+        stateOverride?: StateOverride | undefined;
+    },
+): URLRecord | null;
+
+/** https://url.spec.whatwg.org/#scheme-start-state */
+export type StateOverride =
+    | "scheme start"
+    | "scheme"
+    | "no scheme"
+    | "special relative or authority"
+    | "path or authority"
+    | "relative"
+    | "relative slash"
+    | "special authority slashes"
+    | "special authority ignore slashes"
+    | "authority"
+    | "host"
+    | "hostname"
+    | "port"
+    | "file"
+    | "file slash"
+    | "file host"
+    | "path start"
+    | "path"
+    | "opaque path"
+    | "query"
+    | "fragment";
+
+/** https://url.spec.whatwg.org/#concept-url-serializer */
+export function serializeURL(urlRecord: URLRecord, excludeFragment?: boolean): string;
+
+/** https://url.spec.whatwg.org/#concept-host-serializer */
+export function serializeHost(host: string | number | IPv6Address): string;
+
+/** https://url.spec.whatwg.org/#url-path-serializer */
+export function serializePath(urlRecord: URLRecord): string;
+
+/** https://url.spec.whatwg.org/#serialize-an-integer */
+export function serializeInteger(number: number): string;
+
+/** https://html.spec.whatwg.org#ascii-serialisation-of-an-origin */
+export function serializeURLOrigin(urlRecord: URLRecord): string;
+
+/** https://url.spec.whatwg.org/#set-the-username */
+export function setTheUsername(urlRecord: URLRecord, username: string): void;
+
+/** https://url.spec.whatwg.org/#set-the-password */
+export function setThePassword(urlRecord: URLRecord, password: string): void;
+
+/** https://url.spec.whatwg.org/#url-opaque-path */
+export function hasAnOpaquePath(urlRecord: URLRecord): boolean;
+
+/** https://url.spec.whatwg.org/#cannot-have-a-username-password-port */
+export function cannotHaveAUsernamePasswordPort(urlRecord: URLRecord): boolean;
+
+/** https://url.spec.whatwg.org/#percent-decode */
+export function percentDecodeBytes(buffer: TypedArray): Uint8Array;
+
+/** https://url.spec.whatwg.org/#string-percent-decode */
+export function percentDecodeString(string: string): Uint8Array;
+
+export type TypedArray =
+    | Uint8Array
+    | Uint8ClampedArray
+    | Uint16Array
+    | Uint32Array
+    | Int8Array
+    | Int16Array
+    | Int32Array
+    | Float32Array
+    | Float64Array;
